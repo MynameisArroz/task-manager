@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>タスク</title>
+<style>
+  :root{
+    --paper:#f7f5f0; --ink:#22252b; --navy:#2b4a9e; --navy-bg:#eef1f8;
+    --muted:#8a8578; --line:#e3ded2; --danger:#c0392b; --card:#ffffff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Hiragino Sans','Yu Gothic',system-ui,sans-serif;
+    padding:20px 14px calc(60px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:560px;margin:0 auto}
+  header{border-bottom:3px solid var(--navy);padding-bottom:10px}
+  .eyebrow{font-size:11px;letter-spacing:.18em;color:var(--navy);font-weight:700}
+  h1{font-size:23px;font-weight:800;margin:4px 0 0}
+  h2{font-size:13px;font-weight:800;letter-spacing:.08em;color:#55503f;margin:0}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:22px 0 8px}
+  .count{font-size:12px;color:var(--muted)}
+  .hint{font-size:13px;color:var(--muted);margin:2px 2px}
+
+  /* 毎日 & 時間があれば ボックス */
+  .box{border-radius:12px;padding:10px 12px}
+  .box.blue{background:var(--navy-bg)}
+  .box.warm{background:#f4efe4}
+  .rowline{display:flex;align-items:center;gap:10px;padding:6px 2px}
+  .rowline .nm{flex:1;font-size:15px;font-weight:600}
+  .rowline .nm.done{color:#9a958a}
+
+  /* タスクカード */
+  .card{
+    display:flex;align-items:flex-start;gap:10px;background:var(--card);
+    border-radius:10px;padding:10px 12px;margin-bottom:8px;
+    border-left:4px solid #ccc;box-shadow:0 1px 2px rgba(0,0,0,.05);
+  }
+  .card.done-card{background:#f2f0ea;border-left-color:#c7c2b4 !important}
+  .card .body{flex:1;min-width:0}
+  .card .nm{font-size:15px;font-weight:600;line-height:1.35}
+  .card.done-card .nm{color:#6f6a5d}
+  .meta{font-size:12px;color:var(--muted);margin-top:3px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .meta .urgent{color:var(--danger);font-weight:700}
+  .donebadge{font-size:11px;color:#2f6b3a;background:#e9f3ea;border-radius:4px;padding:0 6px;font-weight:700}
+
+  input[type=checkbox]{width:19px;height:19px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;margin-top:1px}
+  button{font-family:inherit}
+  .x{border:none;background:none;color:#c7c2b4;font-size:17px;cursor:pointer;padding:2px 4px;flex-shrink:0}
+  .ghost{border:1px solid var(--line);background:#fff;color:var(--navy);font-size:11.5px;border-radius:6px;padding:2px 8px;cursor:pointer;flex-shrink:0}
+  .linkbtn{border:none;background:none;color:var(--navy);font-size:13px;font-weight:700;cursor:pointer;padding:4px 2px}
+
+  /* フォーム */
+  .form{background:var(--card);border-radius:12px;padding:13px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .form input[type=text]{
+    width:100%;border:none;outline:none;font-size:16px;padding:6px 2px;
+    background:transparent;border-bottom:1.5px solid var(--line);
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;align-items:center}
+  .chip{border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:3px 12px;font-size:13px;cursor:pointer;font-weight:600}
+  .chip.on{color:#fff;background:var(--ink);border-color:var(--ink)}
+  .chip.cat.on{background:#fff}
+  input[type=date]{border:1.5px solid var(--line);border-radius:8px;padding:3px 8px;font-size:13px;background:#fff;font-family:inherit;color:var(--ink)}
+  .primary{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:14px;font-weight:700;cursor:pointer;margin-left:auto}
+  .primary:disabled{background:#c7c2b4;cursor:default}
+  .small-input{flex:1;border:1.5px solid #c9d2e8;border-radius:8px;padding:6px 10px;font-size:14px;outline:none;min-width:0}
+  .err{font-size:12px;color:var(--danger);margin:8px 0 0}
+
+  /* 日付移動ポップ */
+  .movebar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+  .movebar button{border:1px solid var(--line);background:#fff;border-radius:6px;font-size:12px;padding:3px 9px;cursor:pointer;color:var(--ink)}
+  footer{font-size:11.5px;color:#b3ad9e;margin-top:34px;text-align:center;line-height:1.7}
+  .datechip{font-size:12px;color:var(--navy);background:var(--navy-bg);border-radius:4px;padding:0 6px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+"use strict";
+const KEY="ryo-tasks-standalone-v1";
+const DEFAULT_CATS=[
+  {name:"大学",color:"#2b4a9e"},
+  {name:"生活",color:"#2f6b3a"},
+  {name:"その他",color:"#6b5d43"},
+];
+const PALETTE=["#8e44ad","#c0392b","#b8860b","#16748f","#a04070","#4a6741","#7a5230","#3d5a80"];
+
+// ---------- state ----------
+let S=load();
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw){const p=JSON.parse(raw);return{
+      cats:p.cats||DEFAULT_CATS,
+      routines:p.routines||[],
+      iftime:p.iftime||[],
+      tasks:p.tasks||[],
+    };}
+  }catch(e){}
+  return {cats:[...DEFAULT_CATS],routines:[],iftime:[],tasks:[]};
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){alert("保存に失敗した。ブラウザのストレージ設定を確認してみて。");}}
+
+// ---------- utils ----------
+const pad=n=>String(n).padStart(2,"0");
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;};
+const addDays=(iso,n)=>{const d=new Date(iso+"T00:00:00");d.setDate(d.getDate()+n);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;};
+const dLeft=iso=>Math.round((new Date(iso+"T00:00:00")-new Date(today()+"T00:00:00"))/864e5);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const fmtMD=iso=>{const[,m,d]=iso.split("-");return `${+m}/${+d}`;};
+const esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const catColor=name=>(S.cats.find(c=>c.name===name)||{}).color||"#999";
+const rel=iso=>{const n=dLeft(iso);return n===0?"今日":n===1?"明日":n===2?"明後日":n===-1?"昨日":n<0?`${-n}日前`:`${fmtMD(iso)}`;};
+
+// ---------- form state (not persisted) ----------
+let F={name:"",type:"today",cat:S.cats[0].name,due:"",date:today(),
+       addingRoutine:false,addingIftime:false,addingCat:false,moveOpen:null,showAllDates:false};
+
+// ---------- actions ----------
+const A={
+  toggleRoutine(id){const r=S.routines.find(r=>r.id===id);r.doneDate=r.doneDate===today()?null:today();save();render();},
+  delRoutine(id){S.routines=S.routines.filter(r=>r.id!==id);save();render();},
+  addRoutine(v){v=v.trim();if(!v)return;S.routines.push({id:uid(),name:v,doneDate:null});save();F.addingRoutine=false;render();},
+
+  toggleIftime(id){const t=S.iftime.find(t=>t.id===id);t.done=!t.done;t.doneDate=t.done?today():null;save();render();},
+  delIftime(id){S.iftime=S.iftime.filter(t=>t.id!==id);save();render();},
+  addIftime(v){v=v.trim();if(!v)return;S.iftime.push({id:uid(),name:v,done:false});save();F.addingIftime=false;render();},
+
+  addCat(v){v=v.trim();if(!v)return;if(S.cats.some(c=>c.name===v)){alert("同じ名前のカテゴリがあるよ");return;}
+    S.cats.push({name:v,color:PALETTE[S.cats.length%PALETTE.length]});F.cat=v;save();F.addingCat=false;render();},
+  delCat(name){if(S.cats.length<=1)return;S.cats=S.cats.filter(c=>c.name!==name);if(F.cat===name)F.cat=S.cats[0].name;save();render();},
+
+  addTask(){const n=F.name.trim();if(!n)return;if(F.type==="due"&&!F.due)return;
+    S.tasks.unshift({id:uid(),name:n,cat:F.cat,
+      type:F.type==="someday"?"someday":F.type==="due"?"due":"scheduled",
+      date:F.type==="today"?F.date:null,
+      due:F.type==="due"?F.due:null,
+      done:false,doneDate:null});
+    F.name="";F.due="";F.date=today();save();render();},
+
+  toggleTask(id){const t=S.tasks.find(t=>t.id===id);t.done=!t.done;t.doneDate=t.done?today():null;save();render();},
+  delTask(id){S.tasks=S.tasks.filter(t=>t.id!==id);save();render();},
+  moveTask(id,iso){const t=S.tasks.find(t=>t.id===id);t.type="scheduled";t.date=iso;t.done=false;F.moveOpen=null;save();render();},
+  openMove(id){F.moveOpen=F.moveOpen===id?null:id;render();},
+};
+window.A=A;
+
+// ---------- render ----------
+function render(){
+  const t0=today();
+  const wd=["日","月","火","水","木","金","土"][new Date().getDay()];
+  const now=new Date();
+
+  // 今日のタスク: date<=今日 の scheduled(未完了は自動で今日に見える) + 今日完了したもの
+  const todays=S.tasks.filter(t=>t.type==="scheduled"&&(( !t.done && t.date<=t0 )||(t.done&&t.doneDate===t0)));
+  const future=S.tasks.filter(t=>t.type==="scheduled"&&!t.done&&t.date>t0).sort((a,b)=>a.date.localeCompare(b.date));
+  const dues=S.tasks.filter(t=>t.type==="due"&&(!t.done||(t.done&&t.doneDate===t0))).sort((a,b)=>a.due.localeCompare(b.due));
+  const somedays=S.tasks.filter(t=>t.type==="someday"&&!t.done);
+  const rDone=S.routines.filter(r=>r.doneDate===t0).length;
+  const ifOpen=S.iftime.filter(t=>!t.done);
+  const ifDoneToday=S.iftime.filter(t=>t.done&&t.doneDate===t0);
+
+  const catChips=on=>S.cats.map(c=>
+    `<button class="chip cat ${F.cat===c.name?"on":""}" style="${F.cat===c.name?`color:${c.color};border-color:${c.color}`:""}"
+      onclick="F.cat='${esc(c.name)}';render()" oncontextmenu="event.preventDefault();if(confirm('カテゴリ「${esc(c.name)}」を消す?'))A.delCat('${esc(c.name)}')">${esc(c.name)}</button>`).join("");
+
+  const moveBar=t=>F.moveOpen!==t.id?"":`
+    <div class="movebar">
+      <span style="font-size:12px;color:var(--muted)">移動:</span>
+      <button onclick="A.moveTask('${t.id}','${t0}')">今日</button>
+      <button onclick="A.moveTask('${t.id}','${addDays(t0,1)}')">明日</button>
+      <button onclick="A.moveTask('${t.id}','${addDays(t0,2)}')">明後日</button>
+      <input type="date" value="${t.date||t0}" onchange="A.moveTask('${t.id}',this.value)">
+    </div>`;
+
+  const card=t=>{
+    const dl=t.due?dLeft(t.due):null;
+    const urgent=dl!==null&&dl<=1&&!t.done;
+    const carried=t.type==="scheduled"&&!t.done&&t.date<t0;
+    return `<div class="card ${t.done?"done-card":""}" style="border-left-color:${urgent?"var(--danger)":catColor(t.cat)}">
+      <input type="checkbox" ${t.done?"checked":""} onchange="A.toggleTask('${t.id}')">
+      <div class="body">
+        <div class="nm">${esc(t.name)}</div>
+        <div class="meta">
+          <span style="color:${catColor(t.cat)}">${esc(t.cat)}</span>
+          ${t.done?`<span class="donebadge">完了</span>`:""}
+          ${t.due?`<span class="${urgent?"urgent":""}">締切 ${fmtMD(t.due)}${t.done?"":dl===0?"（今日！)":dl===1?"（明日)":dl<0?`（${-dl}日超過)`:`（あと${dl}日)`}</span>`:""}
+          ${carried?`<span class="datechip">${fmtMD(t.date)}から繰越</span>`:""}
+          ${t.type==="scheduled"&&t.date>t0?`<span class="datechip">${rel(t.date)}</span>`:""}
+        </div>
+        ${moveBar(t)}
+      </div>
+      ${t.done?"":`<button class="ghost" onclick="A.openMove('${t.id}')">日付</button>`}
+      <button class="x" onclick="A.delTask('${t.id}')">×</button>
+    </div>`;
+  };
+
+  document.getElementById("app").innerHTML=`
+    <header>
+      <div class="eyebrow">TASKS</div>
+      <h1>${now.getMonth()+1}月${now.getDate()}日（${wd}）</h1>
+    </header>
+
+    <!-- 毎日 -->
+    <div class="sec-head"><h2>🔁 毎日のタスク</h2><span class="count">${rDone}/${S.routines.length} 完了</span></div>
+    <div class="box blue">
+      ${S.routines.length===0&&!F.addingRoutine?`<p class="hint">毎日やることをここに。日付が変わると自動でチェックが外れるよ。</p>`:""}
+      ${S.routines.map(r=>{const d=r.doneDate===t0;return `
+        <div class="rowline">
+          <input type="checkbox" ${d?"checked":""} onchange="A.toggleRoutine('${r.id}')">
+          <span class="nm ${d?"done":""}">${esc(r.name)}${d?` <span class="donebadge">完了</span>`:""}</span>
+          <button class="x" onclick="A.delRoutine('${r.id}')">×</button>
+        </div>`;}).join("")}
+      ${F.addingRoutine?`
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <input class="small-input" id="rin" placeholder="例: 日経新聞読む" onkeydown="if(event.key==='Enter')A.addRoutine(this.value)">
+          <button class="primary" style="margin:0" onclick="A.addRoutine(document.getElementById('rin').value)">追加</button>
+          <button class="linkbtn" style="color:var(--muted)" onclick="F.addingRoutine=false;render()">やめる</button>
+        </div>`
+      :`<button class="linkbtn" onclick="F.addingRoutine=true;render();setTimeout(()=>document.getElementById('rin')?.focus())">＋ 追加</button>`}
+    </div>
+
+    <!-- 時間があれば -->
+    <div class="sec-head"><h2>🕐 時間があればやる</h2><span class="count">${ifOpen.length} 件</span></div>
+    <div class="box warm">
+      ${ifOpen.length===0&&ifDoneToday.length===0&&!F.addingIftime?`<p class="hint">急ぎじゃないけどやりたいこと。チェックするまで毎日ここに残り続けるよ。</p>`:""}
+      ${ifOpen.concat(ifDoneToday).map(t=>`
+        <div class="rowline">
+          <input type="checkbox" ${t.done?"checked":""} onchange="A.toggleIftime('${t.id}')">
+          <span class="nm ${t.done?"done":""}">${esc(t.name)}${t.done?` <span class="donebadge">完了</span>`:""}</span>
+          <button class="x" onclick="A.delIftime('${t.id}')">×</button>
+        </div>`).join("")}
+      ${F.addingIftime?`
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <input class="small-input" id="iin" placeholder="例: 空きコマなびの改修" onkeydown="if(event.key==='Enter')A.addIftime(this.value)">
+          <button class="primary" style="margin:0" onclick="A.addIftime(document.getElementById('iin').value)">追加</button>
+          <button class="linkbtn" style="color:var(--muted)" onclick="F.addingIftime=false;render()">やめる</button>
+        </div>`
+      :`<button class="linkbtn" onclick="F.addingIftime=true;render();setTimeout(()=>document.getElementById('iin')?.focus())">＋ 追加</button>`}
+    </div>
+
+    <!-- 追加フォーム -->
+    <div class="sec-head"><h2>＋ タスクを追加</h2></div>
+    <div class="form">
+      <input type="text" id="tin" placeholder="やること…" value="${esc(F.name)}"
+        oninput="F.name=this.value" onkeydown="if(event.key==='Enter')A.addTask()">
+      <div class="chips">
+        <button class="chip ${F.type==="today"?"on":""}" onclick="F.type='today';render()">日付タスク</button>
+        <button class="chip ${F.type==="due"?"on":""}" onclick="F.type='due';render()">締切あり</button>
+        <button class="chip ${F.type==="someday"?"on":""}" onclick="F.type='someday';render()">いつか</button>
+        ${F.type==="today"?`<input type="date" value="${F.date}" onchange="F.date=this.value">`:""}
+        ${F.type==="due"?`<input type="date" value="${F.due}" onchange="F.due=this.value;render()">`:""}
+      </div>
+      <div class="chips">
+        ${catChips()}
+        ${F.addingCat?`
+          <input class="small-input" id="cin" style="max-width:130px" placeholder="カテゴリ名"
+            onkeydown="if(event.key==='Enter')A.addCat(this.value)">
+          <button class="ghost" onclick="A.addCat(document.getElementById('cin').value)">OK</button>`
+        :`<button class="chip" style="border-style:dashed" onclick="F.addingCat=true;render();setTimeout(()=>document.getElementById('cin')?.focus())">＋</button>`}
+        <button class="primary" onclick="A.addTask()">追加</button>
+      </div>
+      ${F.type==="due"&&!F.due?`<p class="err" style="color:var(--muted)">締切日を選んでね（カテゴリ長押しで削除できるよ）</p>`:`<p class="err" style="color:#b3ad9e">カテゴリは長押し（右クリック）で削除</p>`}
+    </div>
+
+    <!-- 今日 -->
+    <div class="sec-head"><h2>☀️ 今日やる</h2><span class="count">${todays.filter(t=>!t.done).length} 件</span></div>
+    ${todays.length===0?`<p class="hint">今日のタスクはなし。</p>`:todays.map(card).join("")}
+
+    <!-- 予定(未来の日付) -->
+    ${future.length?`
+      <div class="sec-head"><h2>📅 これからの予定</h2><span class="count">${future.length} 件</span></div>
+      ${(F.showAllDates?future:future.slice(0,5)).map(card).join("")}
+      ${future.length>5&&!F.showAllDates?`<button class="linkbtn" onclick="F.showAllDates=true;render()">すべて表示（${future.length}件）</button>`:""}
+    `:""}
+
+    <!-- 締切 -->
+    ${dues.length?`
+      <div class="sec-head"><h2>⏰ 締切あり</h2><span class="count">${dues.filter(t=>!t.done).length} 件</span></div>
+      ${dues.map(card).join("")}
+    `:""}
+
+    <!-- いつか -->
+    ${somedays.length?`
+      <div class="sec-head"><h2>🌱 いつかやる</h2><span class="count">${somedays.length} 件</span></div>
+      ${somedays.map(card).join("")}
+    `:""}
+
+    <footer>
+      データはこの端末のブラウザに自動保存<br>
+      完了タスクは当日中は表示され、翌日から一覧が軽くなるよ
+    </footer>
+  `;
+
+  const tin=document.getElementById("tin");
+  if(tin&&F.name){tin.selectionStart=tin.selectionEnd=tin.value.length;}
+}
+render();
+// 日付が変わったら自動更新（開きっぱなし対策）
+let lastDay=today();
+setInterval(()=>{if(today()!==lastDay){lastDay=today();render();}},30000);
+</script>
+</body>
+</html>

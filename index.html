@@ -19,25 +19,44 @@
     -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:560px;margin:0 auto}
-  header{border-bottom:3px solid var(--navy);padding-bottom:10px}
+  header{border-bottom:3px solid var(--navy);padding-bottom:10px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
   .eyebrow{font-size:11px;letter-spacing:.18em;color:var(--navy);font-weight:700}
   h1{font-size:23px;font-weight:800;margin:4px 0 0}
   h2{font-size:13px;font-weight:800;letter-spacing:.08em;color:#55503f;margin:0}
-  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:22px 0 8px}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:22px 0 8px;gap:8px;flex-wrap:wrap}
+  .sec-head-left{display:flex;align-items:baseline;gap:8px}
   .count{font-size:12px;color:var(--muted)}
   .hint{font-size:13px;color:var(--muted);margin:2px 2px}
+
+  .gear{border:none;background:none;font-size:20px;cursor:pointer;color:var(--navy);padding:4px;line-height:1}
+  .syncline{font-size:11px;color:var(--muted);margin-top:2px}
+  .syncline.err{color:var(--danger)}
+
+  /* フィルタバー */
+  .filterbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .fchip{border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:2px 10px;font-size:12px;cursor:pointer;font-weight:600}
+  .fchip.on{color:#fff;background:var(--navy);border-color:var(--navy)}
+
+  /* 設定パネル */
+  .panel{background:var(--card);border-radius:12px;padding:13px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin:14px 0}
+  .panel label{display:block;font-size:12px;color:var(--muted);margin:8px 0 3px;font-weight:700}
+  .panel input[type=text],.panel input[type=password]{
+    width:100%;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-size:14px;outline:none;font-family:inherit;
+  }
+  .panel .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .panel .p{font-size:12px;color:var(--muted);line-height:1.6;margin:8px 0 0}
 
   /* 毎日 & 時間があれば ボックス */
   .box{border-radius:12px;padding:10px 12px}
   .box.blue{background:var(--navy-bg)}
   .box.warm{background:#f4efe4}
-  .rowline{display:flex;align-items:center;gap:10px;padding:6px 2px}
+  .rowline{display:flex;align-items:center;gap:8px;padding:6px 2px}
   .rowline .nm{flex:1;font-size:15px;font-weight:600}
   .rowline .nm.done{color:#9a958a}
 
   /* タスクカード */
   .card{
-    display:flex;align-items:flex-start;gap:10px;background:var(--card);
+    display:flex;align-items:flex-start;gap:8px;background:var(--card);
     border-radius:10px;padding:10px 12px;margin-bottom:8px;
     border-left:4px solid #ccc;box-shadow:0 1px 2px rgba(0,0,0,.05);
   }
@@ -47,7 +66,12 @@
   .card.done-card .nm{color:#6f6a5d}
   .meta{font-size:12px;color:var(--muted);margin-top:3px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   .meta .urgent{color:var(--danger);font-weight:700}
+  .meta .catbtn{border:none;background:none;padding:0;font:inherit;cursor:pointer;text-decoration:underline dotted}
   .donebadge{font-size:11px;color:#2f6b3a;background:#e9f3ea;border-radius:4px;padding:0 6px;font-weight:700}
+
+  .dragh{cursor:grab;color:#cdc7b8;font-size:16px;padding:3px 2px 3px 0;flex-shrink:0;touch-action:none;user-select:none;margin-top:1px}
+  .sortable-ghost{opacity:.35}
+  .sortable-drag{box-shadow:0 4px 10px rgba(0,0,0,.15)}
 
   input[type=checkbox]{width:19px;height:19px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;margin-top:1px}
   button{font-family:inherit}
@@ -71,19 +95,25 @@
   .small-input{flex:1;border:1.5px solid #c9d2e8;border-radius:8px;padding:6px 10px;font-size:14px;outline:none;min-width:0}
   .err{font-size:12px;color:var(--danger);margin:8px 0 0}
 
-  /* 日付移動ポップ */
+  /* 日付移動ポップ / カテゴリ切替ポップ */
   .movebar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
   .movebar button{border:1px solid var(--line);background:#fff;border-radius:6px;font-size:12px;padding:3px 9px;cursor:pointer;color:var(--ink)}
   footer{font-size:11.5px;color:#b3ad9e;margin-top:34px;text-align:center;line-height:1.7}
   .datechip{font-size:12px;color:var(--navy);background:var(--navy-bg);border-radius:4px;padding:0 6px;font-weight:700}
+
+  /* しまったタスク */
+  .archivebox{background:#f0ede4;border-radius:12px;padding:10px 12px}
+  .archivebox .rowline .nm{font-size:13.5px;color:#6f6a5d}
 </style>
 </head>
 <body>
 <div class="wrap" id="app"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script>
 "use strict";
 const KEY="ryo-tasks-standalone-v1";
+const GH_TOKEN_KEY="ryo-tasks-gh-token";
 const DEFAULT_CATS=[
   {name:"大学",color:"#2b4a9e"},
   {name:"生活",color:"#2f6b3a"},
@@ -91,21 +121,38 @@ const DEFAULT_CATS=[
 ];
 const PALETTE=["#8e44ad","#c0392b","#b8860b","#16748f","#a04070","#4a6741","#7a5230","#3d5a80"];
 
+// ---------- GitHub 同期先の推定 ----------
+const GH_OWNER=(location.hostname.endsWith("github.io")?location.hostname.split(".")[0]:"mynamesarroz");
+const GH_REPO=(location.pathname.split("/").filter(Boolean)[0])||"task-manager";
+let GH_SHA=null;
+let syncMsg=localStorage.getItem(GH_TOKEN_KEY)?"未同期":"この端末は同期オフ（設定でトークンを入れると同期する）";
+let syncErr=false;
+
 // ---------- state ----------
 let S=load();
+function normalize(p){
+  return {
+    cats:p.cats||DEFAULT_CATS,
+    routines:p.routines||[],
+    iftime:p.iftime||[],
+    tasks:p.tasks||[],
+    archived:p.archived||[],
+    history:p.history||[],
+    updatedAt:p.updatedAt||0,
+  };
+}
 function load(){
   try{
     const raw=localStorage.getItem(KEY);
-    if(raw){const p=JSON.parse(raw);return{
-      cats:p.cats||DEFAULT_CATS,
-      routines:p.routines||[],
-      iftime:p.iftime||[],
-      tasks:p.tasks||[],
-    };}
+    if(raw){return normalize(JSON.parse(raw));}
   }catch(e){}
-  return {cats:[...DEFAULT_CATS],routines:[],iftime:[],tasks:[]};
+  return normalize({cats:[...DEFAULT_CATS]});
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){alert("保存に失敗した。ブラウザのストレージ設定を確認してみて。");}}
+function save(push=true){
+  S.updatedAt=Date.now();
+  try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){alert("保存に失敗した。ブラウザのストレージ設定を確認してみて。");}
+  if(push)schedulePush();
+}
 
 // ---------- utils ----------
 const pad=n=>String(n).padStart(2,"0");
@@ -117,24 +164,44 @@ const fmtMD=iso=>{const[,m,d]=iso.split("-");return `${+m}/${+d}`;};
 const esc=s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const catColor=name=>(S.cats.find(c=>c.name===name)||{}).color||"#999";
 const rel=iso=>{const n=dLeft(iso);return n===0?"今日":n===1?"明日":n===2?"明後日":n===-1?"昨日":n<0?`${-n}日前`:`${fmtMD(iso)}`;};
+function logHistory(kind,item,done){
+  if(done){
+    S.history.push({id:item.id,name:item.name,cat:item.cat||null,kind,date:today(),ts:Date.now()});
+  }else{
+    for(let i=S.history.length-1;i>=0;i--){
+      if(S.history[i].id===item.id&&S.history[i].kind===kind&&S.history[i].date===today()){S.history.splice(i,1);break;}
+    }
+  }
+  if(S.history.length>800)S.history=S.history.slice(-800);
+}
+function reorderArray(arr,newIds){
+  const map=new Map(arr.map(x=>[x.id,x]));
+  const chosen=newIds.map(id=>map.get(id)).filter(Boolean);
+  const rest=arr.filter(x=>!newIds.includes(x.id));
+  return chosen.concat(rest);
+}
 
 // ---------- form state (not persisted) ----------
 let F={name:"",type:"today",cat:S.cats[0].name,due:"",date:today(),
-       addingRoutine:false,addingIftime:false,addingCat:false,moveOpen:null,showAllDates:false};
+       addingRoutine:false,addingIftime:false,addingCat:false,moveOpen:null,catOpen:null,
+       showAllDates:false,filterCat:null,settingsOpen:false,showArchive:false};
 
 // ---------- actions ----------
 const A={
-  toggleRoutine(id){const r=S.routines.find(r=>r.id===id);r.doneDate=r.doneDate===today()?null:today();save();render();},
+  toggleRoutine(id){const r=S.routines.find(r=>r.id===id);const nd=r.doneDate!==today();r.doneDate=nd?today():null;logHistory("routine",r,nd);save();render();},
   delRoutine(id){S.routines=S.routines.filter(r=>r.id!==id);save();render();},
   addRoutine(v){v=v.trim();if(!v)return;S.routines.push({id:uid(),name:v,doneDate:null});save();F.addingRoutine=false;render();},
+  reorderRoutines(ids){S.routines=reorderArray(S.routines,ids);save();render();},
 
-  toggleIftime(id){const t=S.iftime.find(t=>t.id===id);t.done=!t.done;t.doneDate=t.done?today():null;save();render();},
+  toggleIftime(id){const t=S.iftime.find(t=>t.id===id);t.done=!t.done;t.doneDate=t.done?today():null;logHistory("iftime",t,t.done);save();render();},
   delIftime(id){S.iftime=S.iftime.filter(t=>t.id!==id);save();render();},
   addIftime(v){v=v.trim();if(!v)return;S.iftime.push({id:uid(),name:v,done:false});save();F.addingIftime=false;render();},
+  reorderIftime(ids){S.iftime=reorderArray(S.iftime,ids);save();render();},
 
   addCat(v){v=v.trim();if(!v)return;if(S.cats.some(c=>c.name===v)){alert("同じ名前のカテゴリがあるよ");return;}
     S.cats.push({name:v,color:PALETTE[S.cats.length%PALETTE.length]});F.cat=v;save();F.addingCat=false;render();},
-  delCat(name){if(S.cats.length<=1)return;S.cats=S.cats.filter(c=>c.name!==name);if(F.cat===name)F.cat=S.cats[0].name;save();render();},
+  delCat(name){if(S.cats.length<=1)return;S.cats=S.cats.filter(c=>c.name!==name);if(F.cat===name)F.cat=S.cats[0].name;if(F.filterCat===name)F.filterCat=null;save();render();},
+  setFilter(name){F.filterCat=F.filterCat===name?null:name;render();},
 
   addTask(){const n=F.name.trim();if(!n)return;if(F.type==="due"&&!F.due)return;
     S.tasks.unshift({id:uid(),name:n,cat:F.cat,
@@ -144,31 +211,135 @@ const A={
       done:false,doneDate:null});
     F.name="";F.due="";F.date=today();save();render();},
 
-  toggleTask(id){const t=S.tasks.find(t=>t.id===id);t.done=!t.done;t.doneDate=t.done?today():null;save();render();},
+  toggleTask(id){const t=S.tasks.find(t=>t.id===id);t.done=!t.done;t.doneDate=t.done?today():null;logHistory("task",t,t.done);save();render();},
   delTask(id){S.tasks=S.tasks.filter(t=>t.id!==id);save();render();},
   moveTask(id,iso){const t=S.tasks.find(t=>t.id===id);t.type="scheduled";t.date=iso;t.done=false;F.moveOpen=null;save();render();},
-  openMove(id){F.moveOpen=F.moveOpen===id?null:id;render();},
+  openMove(id){F.moveOpen=F.moveOpen===id?null:id;F.catOpen=null;render();},
+  openCat(id){F.catOpen=F.catOpen===id?null:id;F.moveOpen=null;render();},
+  setCat(id,name){const t=S.tasks.find(t=>t.id===id);if(t)t.cat=name;F.catOpen=null;save();render();},
+  reorderTasksIn(ids){S.tasks=reorderArray(S.tasks,ids);save();render();},
+
+  archiveDone(){
+    const keep=[],moved=[];
+    S.tasks.forEach(t=>t.done?moved.push({...t,archivedAt:today()}):keep.push(t));
+    if(moved.length===0)return;
+    S.tasks=keep;S.archived=moved.concat(S.archived).slice(0,300);save();render();
+  },
+  restoreArchived(id){const t=S.archived.find(t=>t.id===id);if(!t)return;S.archived=S.archived.filter(t=>t.id!==id);const{archivedAt,...rest}=t;S.tasks.unshift(rest);save();render();},
+  purgeArchived(id){S.archived=S.archived.filter(t=>t.id!==id);save();render();},
+  toggleArchiveView(){F.showArchive=!F.showArchive;render();},
+
+  toggleSettings(){F.settingsOpen=!F.settingsOpen;render();},
+  saveToken(){
+    const el=document.getElementById("ghtoken");if(!el)return;
+    const v=el.value.trim();
+    if(!v){alert("トークンを入力して");return;}
+    localStorage.setItem(GH_TOKEN_KEY,v);
+    syncMsg="トークン保存。同期するよ…";syncErr=false;render();
+    ghPull().then(remote=>{
+      if(remote&&(!S.updatedAt||remote.updatedAt>S.updatedAt)){S=normalize(remote);localStorage.setItem(KEY,JSON.stringify(S));}
+      ghPush(S);render();
+    });
+  },
+  clearToken(){localStorage.removeItem(GH_TOKEN_KEY);syncMsg="この端末は同期オフ（設定でトークンを入れると同期する）";syncErr=false;render();},
+  manualSync(){
+    syncMsg="同期中…";syncErr=false;render();
+    ghPull().then(remote=>{
+      if(remote){S=normalize(remote);localStorage.setItem(KEY,JSON.stringify(S));}
+      syncMsg="同期完了 "+new Date().toLocaleTimeString("ja-JP");render();
+    });
+  },
 };
 window.A=A;
+
+// ---------- GitHub 同期 ----------
+function b64ToUtf8(b64){return decodeURIComponent(escape(atob(b64.replace(/\n/g,""))));}
+function utf8ToB64(str){return btoa(unescape(encodeURIComponent(str)));}
+
+async function ghPull(){
+  try{
+    const url=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/tasks.json`;
+    const headers={Accept:"application/vnd.github+json"};
+    const token=localStorage.getItem(GH_TOKEN_KEY);
+    if(token)headers.Authorization=`Bearer ${token}`;
+    const res=await fetch(url,{headers});
+    if(res.status===404){GH_SHA=null;return null;}
+    if(!res.ok){syncMsg="取得エラー: "+res.status;syncErr=true;return null;}
+    const data=await res.json();
+    GH_SHA=data.sha;
+    return JSON.parse(b64ToUtf8(data.content));
+  }catch(e){syncMsg="通信エラー(取得)";syncErr=true;return null;}
+}
+async function ghPush(obj){
+  const token=localStorage.getItem(GH_TOKEN_KEY);
+  if(!token)return;
+  try{
+    const url=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/tasks.json`;
+    const body={message:"update tasks "+new Date().toISOString(),content:utf8ToB64(JSON.stringify(obj,null,2)),branch:"main"};
+    if(GH_SHA)body.sha=GH_SHA;
+    const res=await fetch(url,{method:"PUT",headers:{Authorization:`Bearer ${token}`,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(res.ok){const data=await res.json();GH_SHA=data.content.sha;syncMsg="同期済み "+new Date().toLocaleTimeString("ja-JP");syncErr=false;}
+    else{const err=await res.json().catch(()=>({}));
+      if(res.status===409){ // sha衝突→取り直して再試行
+        const remote=await ghPull();
+        if(remote){body.sha=GH_SHA;const res2=await fetch(url,{method:"PUT",headers:{Authorization:`Bearer ${token}`,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify(body)});
+          if(res2.ok){const d2=await res2.json();GH_SHA=d2.content.sha;syncMsg="同期済み "+new Date().toLocaleTimeString("ja-JP");syncErr=false;}
+        }
+      }else{syncMsg="同期エラー: "+(err.message||res.status);syncErr=true;}
+    }
+  }catch(e){syncMsg="通信エラー(送信)";syncErr=true;}
+  const el=document.getElementById("syncStatus");if(el){el.textContent=syncMsg;el.className="syncline"+(syncErr?" err":"");}
+}
+let pushTimer=null;
+function schedulePush(){
+  if(!localStorage.getItem(GH_TOKEN_KEY))return;
+  if(pushTimer)clearTimeout(pushTimer);
+  pushTimer=setTimeout(()=>ghPush(S),1200);
+}
+
+// ---------- Sortable 初期化 ----------
+let sortInstances=[];
+function initSortable(){
+  sortInstances.forEach(s=>{try{s.destroy();}catch(e){}});
+  sortInstances=[];
+  const mk=(id,handler)=>{
+    const el=document.getElementById(id);
+    if(!el||!window.Sortable)return;
+    sortInstances.push(new Sortable(el,{
+      handle:".dragh",animation:150,ghostClass:"sortable-ghost",dragClass:"sortable-drag",
+      onEnd(){const ids=[...el.children].map(c=>c.dataset.id).filter(Boolean);handler(ids);}
+    }));
+  };
+  mk("routinesList",A.reorderRoutines);
+  mk("iftimeList",A.reorderIftime);
+  mk("todaysList",A.reorderTasksIn);
+  mk("somedaysList",A.reorderTasksIn);
+}
 
 // ---------- render ----------
 function render(){
   const t0=today();
   const wd=["日","月","火","水","木","金","土"][new Date().getDay()];
   const now=new Date();
+  const fc=t=>!F.filterCat||t.cat===F.filterCat;
 
-  // 今日のタスク: date<=今日 の scheduled(未完了は自動で今日に見える) + 今日完了したもの
-  const todays=S.tasks.filter(t=>t.type==="scheduled"&&(( !t.done && t.date<=t0 )||(t.done&&t.doneDate===t0)));
-  const future=S.tasks.filter(t=>t.type==="scheduled"&&!t.done&&t.date>t0).sort((a,b)=>a.date.localeCompare(b.date));
-  const dues=S.tasks.filter(t=>t.type==="due"&&(!t.done||(t.done&&t.doneDate===t0))).sort((a,b)=>a.due.localeCompare(b.due));
-  const somedays=S.tasks.filter(t=>t.type==="someday"&&!t.done);
+  const todays=S.tasks.filter(t=>t.type==="scheduled"&&(( !t.done && t.date<=t0 )||(t.done&&t.doneDate===t0))).filter(fc);
+  const future=S.tasks.filter(t=>t.type==="scheduled"&&!t.done&&t.date>t0).filter(fc).sort((a,b)=>a.date.localeCompare(b.date));
+  const dues=S.tasks.filter(t=>t.type==="due"&&(!t.done||(t.done&&t.doneDate===t0))).filter(fc).sort((a,b)=>a.due.localeCompare(b.due));
+  const somedays=S.tasks.filter(t=>t.type==="someday"&&!t.done).filter(fc);
   const rDone=S.routines.filter(r=>r.doneDate===t0).length;
   const ifOpen=S.iftime.filter(t=>!t.done);
   const ifDoneToday=S.iftime.filter(t=>t.done&&t.doneDate===t0);
+  const doneCount=S.tasks.filter(t=>t.done).length;
 
-  const catChips=on=>S.cats.map(c=>
+  const catChips=()=>S.cats.map(c=>
     `<button class="chip cat ${F.cat===c.name?"on":""}" style="${F.cat===c.name?`color:${c.color};border-color:${c.color}`:""}"
       onclick="F.cat='${esc(c.name)}';render()" oncontextmenu="event.preventDefault();if(confirm('カテゴリ「${esc(c.name)}」を消す?'))A.delCat('${esc(c.name)}')">${esc(c.name)}</button>`).join("");
+
+  const filterChips=()=>`<div class="filterbar">
+    <button class="fchip ${!F.filterCat?"on":""}" onclick="A.setFilter(null)">すべて</button>
+    ${S.cats.map(c=>`<button class="fchip ${F.filterCat===c.name?"on":""}" onclick="A.setFilter('${esc(c.name)}')">${esc(c.name)}</button>`).join("")}
+  </div>`;
 
   const moveBar=t=>F.moveOpen!==t.id?"":`
     <div class="movebar">
@@ -179,22 +350,30 @@ function render(){
       <input type="date" value="${t.date||t0}" onchange="A.moveTask('${t.id}',this.value)">
     </div>`;
 
+  const catBar=t=>F.catOpen!==t.id?"":`
+    <div class="movebar">
+      <span style="font-size:12px;color:var(--muted)">カテゴリ:</span>
+      ${S.cats.map(c=>`<button style="${c.name===t.cat?`border-color:${c.color};color:${c.color};font-weight:700`:""}" onclick="A.setCat('${t.id}','${esc(c.name)}')">${esc(c.name)}</button>`).join("")}
+    </div>`;
+
   const card=t=>{
     const dl=t.due?dLeft(t.due):null;
     const urgent=dl!==null&&dl<=1&&!t.done;
     const carried=t.type==="scheduled"&&!t.done&&t.date<t0;
-    return `<div class="card ${t.done?"done-card":""}" style="border-left-color:${urgent?"var(--danger)":catColor(t.cat)}">
+    return `<div class="card ${t.done?"done-card":""}" data-id="${t.id}" style="border-left-color:${urgent?"var(--danger)":catColor(t.cat)}">
+      ${t.done?"":`<span class="dragh">⠿</span>`}
       <input type="checkbox" ${t.done?"checked":""} onchange="A.toggleTask('${t.id}')">
       <div class="body">
         <div class="nm">${esc(t.name)}</div>
         <div class="meta">
-          <span style="color:${catColor(t.cat)}">${esc(t.cat)}</span>
+          <button class="catbtn" style="color:${catColor(t.cat)}" onclick="A.openCat('${t.id}')">${esc(t.cat)}</button>
           ${t.done?`<span class="donebadge">完了</span>`:""}
           ${t.due?`<span class="${urgent?"urgent":""}">締切 ${fmtMD(t.due)}${t.done?"":dl===0?"（今日！)":dl===1?"（明日)":dl<0?`（${-dl}日超過)`:`（あと${dl}日)`}</span>`:""}
           ${carried?`<span class="datechip">${fmtMD(t.date)}から繰越</span>`:""}
           ${t.type==="scheduled"&&t.date>t0?`<span class="datechip">${rel(t.date)}</span>`:""}
         </div>
         ${moveBar(t)}
+        ${catBar(t)}
       </div>
       ${t.done?"":`<button class="ghost" onclick="A.openMove('${t.id}')">日付</button>`}
       <button class="x" onclick="A.delTask('${t.id}')">×</button>
@@ -203,20 +382,43 @@ function render(){
 
   document.getElementById("app").innerHTML=`
     <header>
-      <div class="eyebrow">TASKS</div>
-      <h1>${now.getMonth()+1}月${now.getDate()}日（${wd}）</h1>
+      <div>
+        <div class="eyebrow">TASKS</div>
+        <h1>${now.getMonth()+1}月${now.getDate()}日（${wd}）</h1>
+      </div>
+      <button class="gear" onclick="A.toggleSettings()" title="同期設定">⚙️</button>
     </header>
+
+    ${filterChips()}
+
+    ${F.settingsOpen?`
+    <div class="panel">
+      <h2>🔄 端末間の同期</h2>
+      <p class="p">接続先リポジトリ: <b>${esc(GH_OWNER)}/${esc(GH_REPO)}</b><br>
+      GitHubで Fine-grained personal access token を作って（このリポジトリだけに限定、Contents: Read and write 権限）、下に貼るとこの端末が自動で同期するようになるよ。トークンはこの端末のブラウザにしか保存されない。</p>
+      <label>Personal Access Token</label>
+      <input type="password" id="ghtoken" placeholder="github_pat_...">
+      <div class="row">
+        <button class="ghost" onclick="A.saveToken()">保存して同期</button>
+        <button class="ghost" onclick="A.manualSync()">今すぐ取得</button>
+        <button class="ghost" onclick="A.clearToken()">トークン削除</button>
+      </div>
+      <div class="syncline${syncErr?" err":""}" id="syncStatus">${esc(syncMsg)}</div>
+    </div>`:""}
 
     <!-- 毎日 -->
     <div class="sec-head"><h2>🔁 毎日のタスク</h2><span class="count">${rDone}/${S.routines.length} 完了</span></div>
     <div class="box blue">
       ${S.routines.length===0&&!F.addingRoutine?`<p class="hint">毎日やることをここに。日付が変わると自動でチェックが外れるよ。</p>`:""}
+      <div id="routinesList">
       ${S.routines.map(r=>{const d=r.doneDate===t0;return `
-        <div class="rowline">
+        <div class="rowline" data-id="${r.id}">
+          <span class="dragh">⠿</span>
           <input type="checkbox" ${d?"checked":""} onchange="A.toggleRoutine('${r.id}')">
           <span class="nm ${d?"done":""}">${esc(r.name)}${d?` <span class="donebadge">完了</span>`:""}</span>
           <button class="x" onclick="A.delRoutine('${r.id}')">×</button>
         </div>`;}).join("")}
+      </div>
       ${F.addingRoutine?`
         <div style="display:flex;gap:8px;margin-top:6px">
           <input class="small-input" id="rin" placeholder="例: 日経新聞読む" onkeydown="if(event.key==='Enter')A.addRoutine(this.value)">
@@ -230,12 +432,15 @@ function render(){
     <div class="sec-head"><h2>🕐 時間があればやる</h2><span class="count">${ifOpen.length} 件</span></div>
     <div class="box warm">
       ${ifOpen.length===0&&ifDoneToday.length===0&&!F.addingIftime?`<p class="hint">急ぎじゃないけどやりたいこと。チェックするまで毎日ここに残り続けるよ。</p>`:""}
+      <div id="iftimeList">
       ${ifOpen.concat(ifDoneToday).map(t=>`
-        <div class="rowline">
+        <div class="rowline" data-id="${t.id}">
+          <span class="dragh">⠿</span>
           <input type="checkbox" ${t.done?"checked":""} onchange="A.toggleIftime('${t.id}')">
           <span class="nm ${t.done?"done":""}">${esc(t.name)}${t.done?` <span class="donebadge">完了</span>`:""}</span>
           <button class="x" onclick="A.delIftime('${t.id}')">×</button>
         </div>`).join("")}
+      </div>
       ${F.addingIftime?`
         <div style="display:flex;gap:8px;margin-top:6px">
           <input class="small-input" id="iin" placeholder="例: 空きコマなびの改修" onkeydown="if(event.key==='Enter')A.addIftime(this.value)">
@@ -270,8 +475,11 @@ function render(){
     </div>
 
     <!-- 今日 -->
-    <div class="sec-head"><h2>☀️ 今日やる</h2><span class="count">${todays.filter(t=>!t.done).length} 件</span></div>
-    ${todays.length===0?`<p class="hint">今日のタスクはなし。</p>`:todays.map(card).join("")}
+    <div class="sec-head">
+      <div class="sec-head-left"><h2>☀️ 今日やる</h2><span class="count">${todays.filter(t=>!t.done).length} 件</span></div>
+      ${doneCount>0?`<button class="linkbtn" onclick="A.archiveDone()">✓ 済んだ分をしまう（${doneCount}）</button>`:""}
+    </div>
+    <div id="todaysList">${todays.length===0?`<p class="hint">今日のタスクはなし。</p>`:todays.map(card).join("")}</div>
 
     <!-- 予定(未来の日付) -->
     ${future.length?`
@@ -287,24 +495,47 @@ function render(){
     `:""}
 
     <!-- いつか -->
-    ${somedays.length?`
-      <div class="sec-head"><h2>🌱 いつかやる</h2><span class="count">${somedays.length} 件</span></div>
-      ${somedays.map(card).join("")}
-    `:""}
+    <div class="sec-head"><h2>🌱 いつかやる</h2><span class="count">${somedays.length} 件</span></div>
+    <div id="somedaysList">${somedays.length===0?`<p class="hint">${F.filterCat?"このカテゴリのタスクはなし。":"いまはなし。"}</p>`:somedays.map(card).join("")}</div>
+
+    <!-- しまったタスク -->
+    <div class="sec-head"><h2>🗄 しまったタスク</h2><span class="count">${S.archived.length} 件</span></div>
+    ${S.archived.length===0?`<p class="hint">完了したタスクを「しまう」とここに移る。</p>`:`
+      <button class="linkbtn" onclick="A.toggleArchiveView()">${F.showArchive?"閉じる":"表示する"}</button>
+      ${F.showArchive?`<div class="archivebox">${S.archived.map(t=>`
+        <div class="rowline">
+          <span class="nm">${esc(t.name)} <span style="color:var(--muted);font-size:11px">（${esc(t.archivedAt||"")}）</span></span>
+          <button class="ghost" onclick="A.restoreArchived('${t.id}')">戻す</button>
+          <button class="x" onclick="A.purgeArchived('${t.id}')">×</button>
+        </div>`).join("")}</div>`:""}
+    `}
 
     <footer>
-      データはこの端末のブラウザに自動保存<br>
-      完了タスクは当日中は表示され、翌日から一覧が軽くなるよ
+      データはこの端末のブラウザに自動保存 + 設定でトークンを入れるとGitHub経由で他端末とも同期<br>
+      完了タスクは「しまう」を押すまで一覧に残るよ
     </footer>
   `;
 
   const tin=document.getElementById("tin");
   if(tin&&F.name){tin.selectionStart=tin.selectionEnd=tin.value.length;}
+  initSortable();
 }
 render();
+
 // 日付が変わったら自動更新（開きっぱなし対策）
 let lastDay=today();
 setInterval(()=>{if(today()!==lastDay){lastDay=today();render();}},30000);
+
+// 起動時にGitHubから最新を取得（あれば）して、ローカルより新しければ反映
+(async()=>{
+  const remote=await ghPull();
+  if(remote&&(!S.updatedAt||(remote.updatedAt&&remote.updatedAt>S.updatedAt))){
+    S=normalize(remote);
+    localStorage.setItem(KEY,JSON.stringify(S));
+    render();
+  }
+  const el=document.getElementById("syncStatus");if(el){el.textContent=syncMsg;el.className="syncline"+(syncErr?" err":"");}
+})();
 </script>
 </body>
 </html>

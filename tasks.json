@@ -1,0 +1,185 @@
+{
+  "cats": [
+    {
+      "name": "大学",
+      "color": "#2b4a9e"
+    },
+    {
+      "name": "生活",
+      "color": "#2f6b3a"
+    },
+    {
+      "name": "その他",
+      "color": "#6b5d43"
+    },
+    {
+      "name": "バイト",
+      "color": "#16748f"
+    }
+  ],
+  "routines": [
+    {
+      "id": "mrpp9qza771v",
+      "name": "スペイン語のテキストを進める",
+      "doneDate": null
+    },
+    {
+      "id": "mrpp9vyig9ty",
+      "name": "日経新聞を読む",
+      "doneDate": "2026-07-18"
+    },
+    {
+      "id": "mrq71j8hnpx0",
+      "name": "Duolingo 実施",
+      "doneDate": "2026-07-18"
+    }
+  ],
+  "iftime": [],
+  "tasks": [
+    {
+      "id": "mrppc3lo7jvq",
+      "name": "ニュージーランド 店探し",
+      "cat": "生活",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
+      "id": "mrppbtzzvb26",
+      "name": "物流論 勉強",
+      "cat": "大学",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
+      "id": "mrq6xoyidfbp",
+      "name": "task manager ゴリゴリやる",
+      "cat": "その他",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
+      "id": "mrppciiaw7jj",
+      "name": "駐輪場支払う",
+      "cat": "生活",
+      "type": "scheduled",
+      "date": "2026-07-19",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
+      "id": "mrppat1h1d3g",
+      "name": "貿易政策論のレポートを終わらせる",
+      "cat": "大学",
+      "type": "due",
+      "date": null,
+      "due": "2026-07-30",
+      "done": false,
+      "doneDate": null
+    }
+  ],
+  "archived": [
+    {
+      "id": "mrppco1h3fia",
+      "name": "椎名ちゃんに連絡帰す",
+      "cat": "その他",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": true,
+      "doneDate": "2026-07-18",
+      "archivedAt": "2026-07-18"
+    },
+    {
+      "id": "mrppbnqybxug",
+      "name": "貿易商務論 勉強",
+      "cat": "大学",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": true,
+      "doneDate": "2026-07-18",
+      "archivedAt": "2026-07-18"
+    },
+    {
+      "id": "mrq4snhox7nj",
+      "name": "ファッション買い物",
+      "cat": "生活",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": true,
+      "doneDate": "2026-07-18",
+      "archivedAt": "2026-07-18"
+    },
+    {
+      "id": "mrppcbzpr6ec",
+      "name": "BIZ シフト埋める",
+      "cat": "バイト",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": true,
+      "doneDate": "2026-07-18",
+      "archivedAt": "2026-07-18"
+    },
+    {
+      "id": "mrppbda17e37",
+      "name": "物流論・貿易商務論 リソース取り込み",
+      "cat": "大学",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": true,
+      "doneDate": "2026-07-18",
+      "archivedAt": "2026-07-18"
+    },
+    {
+      "id": "mrppaaso4zzy",
+      "name": "国際ビジネス交渉論レポート終わらせる",
+      "cat": "大学",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": true,
+      "doneDate": "2026-07-18",
+      "archivedAt": "2026-07-18"
+    }
+  ],
+  "history": [
+    {
+      "id": "mrppaaso4zzy",
+      "name": "国際ビジネス交渉論レポート終わらせる",
+      "cat": "大学",
+      "kind": "task",
+      "date": "2026-07-18",
+      "ts": 1784369431247
+    },
+    {
+      "id": "mrppco1h3fia",
+      "name": "椎名ちゃんに連絡帰す",
+      "cat": "その他",
+      "kind": "task",
+      "date": "2026-07-18",
+      "ts": 1784376366976
+    },
+    {
+      "id": "mrppbnqybxug",
+      "name": "貿易商務論 勉強",
+      "cat": "大学",
+      "kind": "task",
+      "date": "2026-07-18",
+      "ts": 1784377420445
+    }
+  ],
+  "updatedAt": 1784377421995
+}

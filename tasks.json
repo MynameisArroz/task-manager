@@ -37,6 +37,16 @@
   "iftime": [],
   "tasks": [
     {
+      "id": "mrr2btsxiyiy",
+      "name": "貿易商務論演習(バイト休憩中)",
+      "cat": "大学",
+      "type": "scheduled",
+      "date": "2026-07-19",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
       "id": "mrr2asoohac5",
       "name": "バイト",
       "cat": "バイト",
@@ -191,5 +201,5 @@
       "ts": 1784377420445
     }
   ],
-  "updatedAt": 1784421182905
+  "updatedAt": 1784421231009
 }

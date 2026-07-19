@@ -37,6 +37,16 @@
   "iftime": [],
   "tasks": [
     {
+      "id": "mrr2asoohac5",
+      "name": "バイト",
+      "cat": "バイト",
+      "type": "scheduled",
+      "date": "2026-07-19",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
       "id": "mrppc3lo7jvq",
       "name": "ニュージーランド 店探し",
       "cat": "生活",
@@ -181,5 +191,5 @@
       "ts": 1784377420445
     }
   ],
-  "updatedAt": 1784377421995
+  "updatedAt": 1784421182905
 }

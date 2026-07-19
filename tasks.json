@@ -83,8 +83,8 @@
       "type": "scheduled",
       "date": "2026-07-18",
       "due": null,
-      "done": false,
-      "doneDate": null
+      "done": true,
+      "doneDate": "2026-07-19"
     },
     {
       "id": "mrppciiaw7jj",
@@ -199,7 +199,15 @@
       "kind": "task",
       "date": "2026-07-18",
       "ts": 1784377420445
+    },
+    {
+      "id": "mrq6xoyidfbp",
+      "name": "task manager ゴリゴリやる",
+      "cat": "その他",
+      "kind": "task",
+      "date": "2026-07-19",
+      "ts": 1784421237667
     }
   ],
-  "updatedAt": 1784421231009
+  "updatedAt": 1784421237667
 }

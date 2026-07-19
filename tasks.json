@@ -37,6 +37,16 @@
   "iftime": [],
   "tasks": [
     {
+      "id": "mrr9b4s2niff",
+      "name": "マネーフォワード連携(VNEO JAL primeカード連携)",
+      "cat": "生活",
+      "type": "scheduled",
+      "date": "2026-07-19",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
       "id": "mrr71bo8g1ut",
       "name": "家計管理(れなの誕生日プレゼント・旅行にむけて)",
       "cat": "生活",
@@ -239,5 +249,5 @@
       "ts": 1784429116005
     }
   ],
-  "updatedAt": 1784429139032
+  "updatedAt": 1784432955890
 }

@@ -37,6 +37,16 @@
   "iftime": [],
   "tasks": [
     {
+      "id": "mrr2c8biavr8",
+      "name": "国際ビジネス レポート再チェック",
+      "cat": "大学",
+      "type": "scheduled",
+      "date": "2026-07-19",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
       "id": "mrr2btsxiyiy",
       "name": "貿易商務論演習(バイト休憩中)",
       "cat": "大学",
@@ -209,5 +219,5 @@
       "ts": 1784421237667
     }
   ],
-  "updatedAt": 1784421237667
+  "updatedAt": 1784421249822
 }

@@ -37,6 +37,16 @@
   "iftime": [],
   "tasks": [
     {
+      "id": "mrr71bo8g1ut",
+      "name": "家計管理(れなの誕生日プレゼント・旅行にむけて)",
+      "cat": "生活",
+      "type": "scheduled",
+      "date": "2026-07-19",
+      "due": null,
+      "done": false,
+      "doneDate": null
+    },
+    {
       "id": "mrr2btsxiyiy",
       "name": "貿易商務論演習(バイト休憩中)",
       "cat": "大学",
@@ -229,5 +239,5 @@
       "ts": 1784429116005
     }
   ],
-  "updatedAt": 1784429116813
+  "updatedAt": 1784429139032
 }

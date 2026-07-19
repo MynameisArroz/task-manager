@@ -37,16 +37,6 @@
   "iftime": [],
   "tasks": [
     {
-      "id": "mrr2c8biavr8",
-      "name": "国際ビジネス レポート再チェック",
-      "cat": "大学",
-      "type": "scheduled",
-      "date": "2026-07-19",
-      "due": null,
-      "done": false,
-      "doneDate": null
-    },
-    {
       "id": "mrr2btsxiyiy",
       "name": "貿易商務論演習(バイト休憩中)",
       "cat": "大学",
@@ -87,16 +77,6 @@
       "doneDate": null
     },
     {
-      "id": "mrq6xoyidfbp",
-      "name": "task manager ゴリゴリやる",
-      "cat": "その他",
-      "type": "scheduled",
-      "date": "2026-07-18",
-      "due": null,
-      "done": true,
-      "doneDate": "2026-07-19"
-    },
-    {
       "id": "mrppciiaw7jj",
       "name": "駐輪場支払う",
       "cat": "生活",
@@ -118,6 +98,28 @@
     }
   ],
   "archived": [
+    {
+      "id": "mrr2c8biavr8",
+      "name": "国際ビジネス レポート再チェック",
+      "cat": "大学",
+      "type": "scheduled",
+      "date": "2026-07-19",
+      "due": null,
+      "done": true,
+      "doneDate": "2026-07-19",
+      "archivedAt": "2026-07-19"
+    },
+    {
+      "id": "mrq6xoyidfbp",
+      "name": "task manager ゴリゴリやる",
+      "cat": "その他",
+      "type": "scheduled",
+      "date": "2026-07-18",
+      "due": null,
+      "done": true,
+      "doneDate": "2026-07-19",
+      "archivedAt": "2026-07-19"
+    },
     {
       "id": "mrppco1h3fia",
       "name": "椎名ちゃんに連絡帰す",
@@ -217,7 +219,15 @@
       "kind": "task",
       "date": "2026-07-19",
       "ts": 1784421237667
+    },
+    {
+      "id": "mrr2c8biavr8",
+      "name": "国際ビジネス レポート再チェック",
+      "cat": "大学",
+      "kind": "task",
+      "date": "2026-07-19",
+      "ts": 1784429116005
     }
   ],
-  "updatedAt": 1784421249822
+  "updatedAt": 1784429116813
 }
